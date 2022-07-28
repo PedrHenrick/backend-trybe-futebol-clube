@@ -17,7 +17,6 @@ module.exports = {
       },
       away_team: {
         type: Sequelize.INTEGER,
-        unique: true,
         allowNull: false,
       },
       away_team_goals: {
