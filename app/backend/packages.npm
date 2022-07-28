@@ -1,3 +1,4 @@
 joi
 cors
 @types/cors
+express-async-errors
