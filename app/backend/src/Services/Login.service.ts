@@ -1,25 +1,24 @@
-import { compareSync } from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 import ErrorHandle from '../Middleware/Class/error';
 import ILogin from '../Interfaces/ILogin';
 import LoginModel from '../Models/Login.model';
 import { generateJWTToken } from '../Utils/JWT';
 
-class LoginService {
-  private model: LoginModel;
+export default class LoginService {
+  public authenticate = async ({ email, password }: ILogin): Promise<string> => {
+    const authResult = await new LoginModel().findOneUser(email);
 
-  constructor() {
-    this.model = new LoginModel();
-  }
+    if (!authResult) throw new ErrorHandle(401, 'Incorrect email or password');
+    const verifyPassword = bcrypt.compare(password, authResult.password);
+    if (!verifyPassword) throw new ErrorHandle(401, 'Incorrect email or password');
 
-  public async authenticate({ email, password }: ILogin): Promise<string> {
-    const authResult = await this.model.findOneUser(email);
-    console.log(authResult);
-    if (!authResult) throw new ErrorHandle(400, 'Incorrect email or password');
-    const verifyPassword = compareSync(password, authResult.password);
-    if (!verifyPassword) throw new ErrorHandle(400, 'Incorrect email or password');
+    const user = {
+      username: authResult.username,
+      email: authResult.email,
+      role: authResult.role,
+      password: authResult.password,
+    };
 
-    return generateJWTToken(authResult);
-  }
+    return generateJWTToken(user);
+  };
 }
-
-export default LoginService;
