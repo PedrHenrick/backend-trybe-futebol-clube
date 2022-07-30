@@ -9,7 +9,7 @@ export default class LoginService {
     const authResult = await new LoginModel().findOneUser(email);
 
     if (!authResult) throw new ErrorHandle(401, 'Incorrect email or password');
-    const verifyPassword = bcrypt.compare(password, authResult.password);
+    const verifyPassword = bcrypt.compareSync(password, authResult.password);
     if (!verifyPassword) throw new ErrorHandle(401, 'Incorrect email or password');
 
     const user = {
