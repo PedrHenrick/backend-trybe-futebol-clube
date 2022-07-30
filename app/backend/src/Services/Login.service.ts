@@ -16,7 +16,6 @@ export default class LoginService {
       username: authResult.username,
       email: authResult.email,
       role: authResult.role,
-      password: authResult.password,
     };
 
     return generateJWTToken(user);

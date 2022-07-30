@@ -9,13 +9,13 @@ const jwtConfig: jwt.SignOptions = {
   noTimestamp: true,
 };
 
-export const generateJWTToken = (payload: Omit<IUSer, 'password'>) =>
+export const generateJWTToken = (payload: IUSer) =>
   jwt.sign(payload, SECRET, jwtConfig);
 
 export const authenticateToken = async (token: string) => {
   try {
     const hasValid = jwt.verify(token, SECRET, jwtConfig);
-    return hasValid;
+    return hasValid as IUSer;
   } catch (_err) {
     throw new ErrorHandle(401, 'Invalid token');
   }

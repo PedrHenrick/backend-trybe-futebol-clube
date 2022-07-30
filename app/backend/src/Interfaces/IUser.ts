@@ -3,5 +3,5 @@ export default interface IUSer {
   username: string;
   role: string;
   email: string;
-  password: string;
+  password?: string;
 }
