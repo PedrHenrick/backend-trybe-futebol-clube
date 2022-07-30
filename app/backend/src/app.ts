@@ -10,10 +10,11 @@ class App {
 
     this.config();
 
-    // Não remover essa rota
-    this.app.get('/', (req, res) => res.json({ ok: true }));
     this.app.use(router);
     this.app.use(ErrorMiddleware);
+
+    // Não remover essa rota
+    this.app.get('/', (req, res) => res.json({ ok: true }));
   }
 
   private config():void {
