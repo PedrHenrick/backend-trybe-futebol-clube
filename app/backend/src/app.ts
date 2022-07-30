@@ -1,3 +1,5 @@
+import 'express-async-errors';
+import * as cors from 'cors';
 import * as express from 'express';
 import ErrorMiddleware from './Middleware/Error.middleware';
 import router from './Routes/router';
@@ -10,11 +12,11 @@ class App {
 
     this.config();
 
+    // Não remover essa rota
+    this.app.get('/', (_req, res) => res.json({ ok: true }));
+    this.app.use(cors());
     this.app.use(router);
     this.app.use(ErrorMiddleware);
-
-    // Não remover essa rota
-    this.app.get('/', (req, res) => res.json({ ok: true }));
   }
 
   private config():void {
