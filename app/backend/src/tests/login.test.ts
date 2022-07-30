@@ -1,5 +1,6 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
+import * as axios from 'axios';
 // @ts-ignore
 import chaiHttp = require('chai-http');
 
@@ -118,38 +119,49 @@ describe('Rota /login', () => {
   });
 });
 
-// describe('Rota /login/validate', () => {
-//   let chaiHttpResponse: Response;
+describe('Rota /login/validate', () => {
+  let chaiHttpResponse: Response;
 
-//   before(async () => {
-//     sinon
-//       .stub(user, "findOne")
-//       .resolves(loginValidate as user);
-//   });
+  describe('Não passando token', () => {
+    it('Testando se não é possível fazer requisição sem ter um token de autorização', async () => {
+      chaiHttpResponse = await chai
+      .request(app)
+      .get('/login/validate');
+  
+      expect(chaiHttpResponse.status).to.be.equal(401);
+      expect(chaiHttpResponse.body).to.be
+        .include({ 'message': 'Unauthorized' });
+    });
+  });
 
-//   after(()=>{
-//     (user.findOne as sinon.SinonStub).restore();
-//   });
+  describe('Passando token inválido', () => {
+    it('Testando se não é possível fazer requisição com um token invalido', async () => {
+      chaiHttpResponse = await chai
+        .request(app)
+        .get('/login/validate')
+        .set('authorization', 'tokenInválido');
+  
+        expect(chaiHttpResponse.status).to.be.equal(401);
+        expect(chaiHttpResponse.body).to.be
+          .include({ 'message': 'Invalid token' });
+    });
+  });
 
-//   it('Testando se não é possível fazer requisição sem ter um token de autorização', async () => {
-//     chaiHttpResponse = await chai
-//       .request(app)
-//       .get('/login/validate')
-//       .set('Authorization', '');
-
-//     expect(chaiHttpResponse.error.status).to.be.equal(401);
-//     expect(chaiHttpResponse.error.message).to.be
-//       .include('Unauthorized');
-//   });
-
-//   it('Testando se não é possível fazer requisição sem ter um token de autorização', async () => {
-//     chaiHttpResponse = await chai
-//       .request(app)
-//       .get('/login/validate')
-//       .set('Authorization', 'token');
-
-//     expect(chaiHttpResponse.status).to.be.equal(200);
-//     expect(chaiHttpResponse.body).to.be.an('object');
-//     expect(chaiHttpResponse.body.role).to.be.true;
-//   });
-// });
+  describe('Passando token válido', () => {
+    it('Testando se é possível fazer requisição com um token de autorização', async () => {
+      const { data: { token } } = await axios.default.post(`http://localhost:3001/login`, {
+        "email": "admin@admin.com",
+        "password": "secret_admin"
+      });
+      
+      chaiHttpResponse = await chai
+        .request(app)
+        .get('/login/validate')
+        .set('authorization', token);
+      
+      expect(chaiHttpResponse.status).to.be.equal(200);
+      expect(chaiHttpResponse.body).to.be.an('object');
+      expect(chaiHttpResponse.body.role).to.be.true;
+    });
+  });
+});
