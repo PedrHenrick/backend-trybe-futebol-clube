@@ -37,7 +37,7 @@ describe('Rota /login', () => {
 
     expect(chaiHttpResponse.status).to.be.equal(200);
     expect(chaiHttpResponse.body).to.be.an('object');
-    expect(chaiHttpResponse.body.token).to.be.true;
+    expect(chaiHttpResponse.body.token).to.be.an('string');
   });
 
   it('Testando se não é possível fazer login sem o email', async () => {
