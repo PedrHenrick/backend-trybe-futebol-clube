@@ -7,7 +7,6 @@ const validateMiddleware = (schema: Joi.AnySchema) => (
   _res: Response,
   next: NextFunction,
 ) => {
-  console.log(typeof schema);
   const { error } = schema.validate(req.body, { abortEarly: false });
   if (error) {
     const { message } = error.details[0];
