@@ -48,9 +48,9 @@ describe('Rota /login', () => {
         password: 'senhaDeTesteCorreta'
       });
 
-    expect(chaiHttpResponse.error.status).to.be.equal(400);
-    expect(chaiHttpResponse.error.message).to.be
-      .include('All fields must be filled'); 
+    expect(chaiHttpResponse.status).to.be.equal(400);
+    expect(chaiHttpResponse.body).to.be
+      .include({ 'message': 'All fields must be filled' }); 
   });
 
   it('Testando se não é possível fazer login sem o passsword', async () => {
@@ -62,9 +62,9 @@ describe('Rota /login', () => {
       });
 
       
-    expect(chaiHttpResponse.error.status).to.be.equal(400);
-    expect(chaiHttpResponse.error.message).to.be
-      .include('All fields must be filled'); 
+      expect(chaiHttpResponse.status).to.be.equal(400);
+      expect(chaiHttpResponse.body).to.be
+        .include({ 'message': 'All fields must be filled' }); 
   });
 
   it('Testando se não é possível fazer login com um email inválido', async () => {
@@ -76,8 +76,8 @@ describe('Rota /login', () => {
         password: 'senhaDeTesteCorreta'
       });
 
-    expect(chaiHttpResponse.error.status).to.be.equal(401);
-    expect(chaiHttpResponse.error.message).to.be
+      expect(chaiHttpResponse.status).to.be.equal(401);
+      expect(chaiHttpResponse.body).to.be
       .include('Incorrect email or password');  
   });
 
@@ -90,8 +90,8 @@ describe('Rota /login', () => {
         password: 'senhaDeTesteIncorreta'
       });
 
-    expect(chaiHttpResponse.error.status).to.be.equal(401);
-    expect(chaiHttpResponse.error.message).to.be
+      expect(chaiHttpResponse.status).to.be.equal(401);
+      expect(chaiHttpResponse.body).to.be
       .include('Incorrect email or password');
   });
 });
