@@ -4,15 +4,15 @@ import ILogin from '../Interfaces/ILogin';
 import LoginService from '../Services/Login.service';
 
 class LoginController {
-  public verifyLogin = async (request: Request, response: Response) => {
+  public verifyLogin = async (request: Request, response: Response): Promise<Response> => {
     const authResult = await new LoginService().authenticate(request.body as ILogin);
-    response.status(200).json({ token: authResult });
+    return response.status(200).json({ token: authResult });
   };
 
-  public validate = async (request: Request, response: Response) => {
+  public validate = async (request: Request, response: Response): Promise<Response> => {
     const token = request.headers.authorization || '';
     const userLogged = await authenticateToken(token);
-    response.status(200).json({ role: userLogged.role });
+    return response.status(200).json({ role: userLogged.role });
   };
 }
 
