@@ -10,8 +10,8 @@ export default class LoginController {
   };
 
   public validate = async (request: Request, response: Response): Promise<Response> => {
-    const token = request.headers.authorization || '';
-    const userLogged = await authenticateToken(token);
+    const token = request.headers.authorization;
+    const userLogged = await authenticateToken(String(token));
     return response.status(200).json({ role: userLogged.role });
   };
 }
