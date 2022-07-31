@@ -3,7 +3,7 @@ import { authenticateToken } from '../Utils/JWT';
 import ILogin from '../Interfaces/ILogin';
 import LoginService from '../Services/Login.service';
 
-class LoginController {
+export default class LoginController {
   public verifyLogin = async (request: Request, response: Response): Promise<Response> => {
     const authResult = await new LoginService().authenticate(request.body as ILogin);
     return response.status(200).json({ token: authResult });
@@ -15,5 +15,3 @@ class LoginController {
     return response.status(200).json({ role: userLogged.role });
   };
 }
-
-export default LoginController;
