@@ -37,23 +37,45 @@ describe('Rota /Team', () => {
   });
 
   describe('Testando função getOne', () => {
-    before(async () => {
-      sinon
+    describe('Passando id correto', () => {
+      before(async () => {
+        sinon
         .stub(team, "findOne")
         .resolves(getOneTeamMock as any);
+      });
+
+      after(()=>{ (team.findOne as sinon.SinonStub).restore() });
+
+      it('Testando se ao passar um id correto retorna os dados', async () => {
+        chaiHttpResponse = await chai
+        .request(app)
+        .get('/teams/5')
+
+        expect(chaiHttpResponse.status).to.be.equal(200);
+        expect(chaiHttpResponse.body).to.be.an('object');
+        expect(chaiHttpResponse.body.id).to.be.equal(1);
+        expect(chaiHttpResponse.body.teamName).to.be.equal('Avaí/Kindermann');
+      });
     });
 
-    after(()=>{ (team.findOne as sinon.SinonStub).restore() });
+    describe('Passando id incorreto', () => {
+      before(async () => {
+        sinon
+        .stub(team, "findOne")
+        .resolves(undefined);
+      });
 
-    it('Testando se é possível retornar apenas um dado', async () => {
-      chaiHttpResponse = await chai
-      .request(app)
-      .get('/teams/5')
+      after(()=>{ (team.findOne as sinon.SinonStub).restore() });
 
-      expect(chaiHttpResponse.status).to.be.equal(200);
-      expect(chaiHttpResponse.body).to.be.an('object');
-      expect(chaiHttpResponse.body.id).to.be.equal(1);
-      expect(chaiHttpResponse.body.teamName).to.be.equal('Avaí/Kindermann');
+      it('Testando se ao passar um id incorreto retorna um erro', async () => {
+        chaiHttpResponse = await chai
+        .request(app)
+        .get('/teams/9999')
+        
+        expect(chaiHttpResponse.status).to.be.equal(400);
+        expect(chaiHttpResponse.body).to.be
+        .include({ 'message': 'User is not exists' }); 
+      });
     });
   });
 });
