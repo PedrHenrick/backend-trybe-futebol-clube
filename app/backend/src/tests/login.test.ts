@@ -1,6 +1,5 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
-import * as axios from 'axios';
 // @ts-ignore
 import chaiHttp = require('chai-http');
 
@@ -35,7 +34,6 @@ describe('Rota /login', () => {
         });
 
       expect(chaiHttpResponse.status).to.be.equal(200);
-      expect(chaiHttpResponse.body).to.be.an('object');
       expect(chaiHttpResponse.body.token).to.be.an('string');
     });
   });
@@ -148,20 +146,31 @@ describe('Rota /login/validate', () => {
   });
 
   describe('Passando token válido', () => {
+    before(async () => {
+      sinon
+        .stub(user, "findOne")
+        .resolves(loginSuccessful as user);
+    });
+
+    after(()=>{ (user.findOne as sinon.SinonStub).restore() });
+
     it('Testando se é possível fazer requisição com um token de autorização', async () => {
-      const { data: { token } } = await axios.default.post(`http://localhost:3001/login`, {
-        "email": "admin@admin.com",
-        "password": "secret_admin"
-      });
-      
+      chaiHttpResponse = await chai
+        .request(app)
+        .post('/login')
+        .send({
+          email: 'admin@admin.com',
+          password: 'secret_admin'
+        });
+
       chaiHttpResponse = await chai
         .request(app)
         .get('/login/validate')
-        .set('authorization', token);
+        .set('authorization', chaiHttpResponse.body.token);
       
       expect(chaiHttpResponse.status).to.be.equal(200);
-      expect(chaiHttpResponse.body).to.be.an('object');
-      expect(chaiHttpResponse.body.role).to.be.true;
+      expect(chaiHttpResponse.body).to.be
+          .include({ 'role': 'admin' });
     });
   });
 });
