@@ -6,6 +6,7 @@ import chaiHttp = require('chai-http');
 import { app } from '../app';
 import Match from '../database/models/match';
 import User from '../database/models/user';
+import Team from '../database/models/team';
 
 import { Response } from 'superagent';
 import {
@@ -18,6 +19,7 @@ import {
 } from './mocks/match.mock';
 
 import { loginSuccessful } from './mocks/login.mock';
+import { getOneTeamMock } from './mocks/team.mock';
 
 chai.use(chaiHttp);
 
@@ -97,17 +99,21 @@ describe('Rota /Match', () => {
         .resolves(postMatchMock as any);
 
         sinon
+        .stub(Team, "findOne")
+        .resolves(getOneTeamMock as any);
+
+        sinon
         .stub(User, "findOne")
         .resolves(loginSuccessful as User);
       });
-        
   
       after(async () => {
         (Match.create as sinon.SinonStub).restore(),
+        (Team.findOne as sinon.SinonStub).restore(),
         (User.findOne as sinon.SinonStub).restore() 
       });
 
-      it('Testando se é possível adicionar um usuário sem problemas', async () => {
+      it('Testando se é possível adicionar uma partida sem problemas', async () => {
         chaiHttpResponse = await chai
         .request(app)
         .post('/login')
@@ -138,6 +144,127 @@ describe('Rota /Match', () => {
       });
     });
 
+    describe('Passando dados incorretos', () => {
+      describe('Passando times que não existes', () => {
+        before(async () => {
+          sinon
+            .stub(Match, "create")
+            .resolves(postMatchMock as any);
+
+          sinon
+            .stub(Team, "findOne")
+            .resolves(undefined);
+
+          sinon
+            .stub(User, "findOne")
+            .resolves(loginSuccessful as User);
+        });
+    
+        after(async () => {
+          (Match.create as sinon.SinonStub).restore(),
+          (Team.findOne as sinon.SinonStub).restore(),
+          (User.findOne as sinon.SinonStub).restore() 
+        });
+
+        it('Testando se não é possível passar um homeTeam com id inválido', async () => {
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/login')
+            .send({
+              email: 'admin@admin.com',
+              password: 'secret_admin'
+            });
+          
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/matches')
+            .set('authorization', chaiHttpResponse.body.token)
+            .send({
+              homeTeam: 999,
+              awayTeam: 8,
+              homeTeamGoals: 2,
+              awayTeamGoals: 2
+            });
+          
+          expect(chaiHttpResponse.status).to.be.equal(404);
+          expect(chaiHttpResponse.body).to.be
+          .include({ 'message': 'There is no team with such id!' });
+        });
+
+        it('Testando se não é possível passar um awayTeam com id inválido', async () => {
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/login')
+            .send({
+              email: 'admin@admin.com',
+              password: 'secret_admin'
+            });
+          
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/matches')
+            .set('authorization', chaiHttpResponse.body.token)
+            .send({
+              homeTeam: 8,
+              awayTeam: 9999,
+              homeTeamGoals: 2,
+              awayTeamGoals: 2
+            });
+          
+          expect(chaiHttpResponse.status).to.be.equal(404);
+          expect(chaiHttpResponse.body).to.be
+          .include({ 'message': 'There is no team with such id!' });
+        });
+      });
+
+      describe('Passando times iguais', () => {
+        before(async () => {
+          sinon
+            .stub(Match, "create")
+            .resolves(postMatchMock as any);
+
+          sinon
+            .stub(Team, "findOne")
+            .resolves(getOneTeamMock as any);
+
+          sinon
+            .stub(User, "findOne")
+            .resolves(loginSuccessful as User);
+        });
+    
+        after(async () => {
+          (Match.create as sinon.SinonStub).restore(),
+          (Team.findOne as sinon.SinonStub).restore(),
+          (User.findOne as sinon.SinonStub).restore() 
+        });
+
+        it('Testando se não é possível colocar dois times iguais', async () => {
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/login')
+            .send({
+              email: 'admin@admin.com',
+              password: 'secret_admin'
+            });
+          
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/matches')
+            .set('authorization', chaiHttpResponse.body.token)
+            .send({
+              homeTeam: 8,
+              awayTeam: 8,
+              homeTeamGoals: 2,
+              awayTeamGoals: 2
+            });
+          
+          expect(chaiHttpResponse.status).to.be.equal(401);
+          expect(chaiHttpResponse.body).to.be
+          .include({ 'message': 'It is not possible to create a match with two equal teams' });
+        });
+      });
+    });
+
     describe('Faltando alguns dados', () => {
       before(async () => {
         sinon
@@ -147,7 +274,7 @@ describe('Rota /Match', () => {
   
       after(()=>{ (User.findOne as sinon.SinonStub).restore() });
 
-      it('Testando se não é possível adicionar um usuário sem o homeTeam', async () => {
+      it('Testando se não é possível adicionar uma partida sem o homeTeam', async () => {
         chaiHttpResponse = await chai
           .request(app)
           .post('/login')
@@ -171,7 +298,7 @@ describe('Rota /Match', () => {
           .include({ 'message': 'All fields must be filled' }); 
       });
   
-      it('Testando se não é possível adicionar um usuário sem o awayTeam', async () => {
+      it('Testando se não é possível adicionar uma partida sem o awayTeam', async () => {
         chaiHttpResponse = await chai
           .request(app)
           .post('/login')
@@ -195,7 +322,7 @@ describe('Rota /Match', () => {
           .include({ 'message': 'All fields must be filled' }); 
       });
   
-      it('Testando se não é possível adicionar um usuário sem o homeTeamGoals', async () => {
+      it('Testando se não é possível adicionar uma partida sem o homeTeamGoals', async () => {
         chaiHttpResponse = await chai
           .request(app)
           .post('/login')
@@ -219,7 +346,7 @@ describe('Rota /Match', () => {
           .include({ 'message': 'All fields must be filled' }); 
       });
   
-      it('Testando se não é possível adicionar um usuário sem o awayTeamGoals', async () => {
+      it('Testando se não é possível adicionar uma partida sem o awayTeamGoals', async () => {
         chaiHttpResponse = await chai
           .request(app)
           .post('/login')
