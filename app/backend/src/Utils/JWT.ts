@@ -17,6 +17,6 @@ export const authenticateToken = async (token: string) => {
     const hasValid = jwt.verify(token, SECRET, jwtConfig);
     return hasValid as IUSer;
   } catch (_err) {
-    throw new ErrorHandle(401, 'Invalid token');
+    throw new ErrorHandle(401, 'Token must be a valid token');
   }
 };

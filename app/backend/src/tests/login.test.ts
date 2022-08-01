@@ -141,9 +141,9 @@ describe('Rota /login/validate', () => {
   
         expect(chaiHttpResponse.status).to.be.equal(401);
         expect(chaiHttpResponse.body).to.be
-          .include({ 'message': 'Invalid token' });
+          .include({ 'message': 'Token must be a valid token' });
     });
-  });
+  }); 
 
   describe('Passando token válido', () => {
     before(async () => {
