@@ -8,4 +8,12 @@ export default class MatchModel {
       { model: Team, as: 'teamAway', attributes: ['teamName'] },
     ],
   });
+
+  public getMatchesInProgress = (inProgress: boolean) => Match.findAll({
+    where: { inProgress },
+    include: [
+      { model: Team, as: 'teamHome', attributes: ['teamName'] },
+      { model: Team, as: 'teamAway', attributes: ['teamName'] },
+    ],
+  });
 }
