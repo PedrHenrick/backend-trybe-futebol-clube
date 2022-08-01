@@ -25,4 +25,10 @@ export default class MatchController {
     await new MatchService().endMatch(Number(id), false);
     return response.status(200).json({ message: 'Finished' });
   };
+
+  public updateMatch = async (request: Request, response: Response): Promise<Response> => {
+    const { id } = request.params;
+    await new MatchService().updateMatch(Number(id), request.body);
+    return response.status(200).json({ message: 'Partida atualizada com sucesso!' });
+  };
 }
