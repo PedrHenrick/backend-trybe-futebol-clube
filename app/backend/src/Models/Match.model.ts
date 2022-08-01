@@ -22,6 +22,9 @@ export default class MatchModel {
 
   public addMatch = (additionScheme: IMatch) => Match.create(additionScheme);
 
-  public updateMatch = async (id: number, inProgress: boolean) => Match
+  public finishMatch = async (id: number, inProgress: boolean) => Match
     .update({ inProgress }, { where: { id } });
+
+  public updateMatch = async (id: number, homeTeamGoals: number, awayTeamGoals: number) => Match
+    .update({ homeTeamGoals, awayTeamGoals }, { where: { id } });
 }
