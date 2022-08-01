@@ -10,6 +10,7 @@ export const loginSchema = joi.object({
 export const matchSchema = joi.object({
   homeTeam: joi.number().min(1).required(),
   awayTeam: joi.number().min(1).required(),
-  homeTeamGoals: joi.number().min(1).required(),
-  awayTeamGoals: joi.number().min(1).required(),
+  homeTeamGoals: joi.number().min(0).required(),
+  awayTeamGoals: joi.number().min(0).required(),
+  inProgress: joi.boolean(),
 });
