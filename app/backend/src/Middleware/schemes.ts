@@ -13,4 +13,6 @@ export const matchSchema = joi.object({
   homeTeamGoals: joi.number().min(0).required(),
   awayTeamGoals: joi.number().min(0).required(),
   inProgress: joi.boolean(),
+}).messages({
+  '*': 'All fields must be filled',
 });
