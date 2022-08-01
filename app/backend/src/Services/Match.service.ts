@@ -6,4 +6,9 @@ export default class MatchService {
     const allMatches = await new MatchModel().getAllMatches();
     return allMatches;
   };
+
+  public getMatchesInProgress = async (inProgress: boolean) => {
+    const matchesInProgress = await new MatchModel().getMatchesInProgress(inProgress);
+    return matchesInProgress;
+  };
 }
