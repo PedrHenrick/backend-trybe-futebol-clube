@@ -263,111 +263,111 @@ describe('Rota /Match', () => {
           .include({ 'message': 'It is not possible to create a match with two equal teams' });
         });
       });
-    });
 
-    describe('Faltando alguns dados', () => {
-      before(async () => {
-        sinon
-          .stub(User, "findOne")
-          .resolves(loginSuccessful as User);
-      });
+      describe('Faltando alguns dados', () => {
+        before(async () => {
+          sinon
+            .stub(User, "findOne")
+            .resolves(loginSuccessful as User);
+        });
+    
+        after(()=>{ (User.findOne as sinon.SinonStub).restore() });
   
-      after(()=>{ (User.findOne as sinon.SinonStub).restore() });
-
-      it('Testando se não é possível adicionar uma partida sem o homeTeam', async () => {
-        chaiHttpResponse = await chai
-          .request(app)
-          .post('/login')
-          .send({
-            email: 'admin@admin.com',
-            password: 'secret_admin'
-          });
+        it('Testando se não é possível adicionar uma partida sem o homeTeam', async () => {
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/login')
+            .send({
+              email: 'admin@admin.com',
+              password: 'secret_admin'
+            });
+    
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/matches')
+            .set('authorization', chaiHttpResponse.body.token)
+            .send({
+              awayTeam: 8,
+              homeTeamGoals: 2,
+              awayTeamGoals: 2
+            });
+    
+          expect(chaiHttpResponse.status).to.be.equal(400);
+          expect(chaiHttpResponse.body).to.be
+            .include({ 'message': 'All fields must be filled' }); 
+        });
+    
+        it('Testando se não é possível adicionar uma partida sem o awayTeam', async () => {
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/login')
+            .send({
+              email: 'admin@admin.com',
+              password: 'secret_admin'
+            });
+    
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/matches')
+            .set('authorization', chaiHttpResponse.body.token)
+            .send({
+              homeTeam: 16,
+              homeTeamGoals: 2,
+              awayTeamGoals: 2
+            });
+    
+          expect(chaiHttpResponse.status).to.be.equal(400);
+          expect(chaiHttpResponse.body).to.be
+            .include({ 'message': 'All fields must be filled' }); 
+        });
+    
+        it('Testando se não é possível adicionar uma partida sem o homeTeamGoals', async () => {
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/login')
+            .send({
+              email: 'admin@admin.com',
+              password: 'secret_admin'
+            });
+    
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/matches')
+            .set('authorization', chaiHttpResponse.body.token)
+            .send({
+              homeTeam: 16,
+              awayTeam: 8,
+              awayTeamGoals: 2
+            });
+    
+          expect(chaiHttpResponse.status).to.be.equal(400);
+          expect(chaiHttpResponse.body).to.be
+            .include({ 'message': 'All fields must be filled' }); 
+        });
+    
+        it('Testando se não é possível adicionar uma partida sem o awayTeamGoals', async () => {
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/login')
+            .send({
+              email: 'admin@admin.com',
+              password: 'secret_admin'
+            });
   
-        chaiHttpResponse = await chai
-          .request(app)
-          .post('/matches')
-          .set('authorization', chaiHttpResponse.body.token)
-          .send({
-            awayTeam: 8,
-            homeTeamGoals: 2,
-            awayTeamGoals: 2
-          });
-  
-        expect(chaiHttpResponse.status).to.be.equal(400);
-        expect(chaiHttpResponse.body).to.be
-          .include({ 'message': 'All fields must be filled' }); 
-      });
-  
-      it('Testando se não é possível adicionar uma partida sem o awayTeam', async () => {
-        chaiHttpResponse = await chai
-          .request(app)
-          .post('/login')
-          .send({
-            email: 'admin@admin.com',
-            password: 'secret_admin'
-          });
-  
-        chaiHttpResponse = await chai
-          .request(app)
-          .post('/matches')
-          .set('authorization', chaiHttpResponse.body.token)
-          .send({
-            homeTeam: 16,
-            homeTeamGoals: 2,
-            awayTeamGoals: 2
-          });
-  
-        expect(chaiHttpResponse.status).to.be.equal(400);
-        expect(chaiHttpResponse.body).to.be
-          .include({ 'message': 'All fields must be filled' }); 
-      });
-  
-      it('Testando se não é possível adicionar uma partida sem o homeTeamGoals', async () => {
-        chaiHttpResponse = await chai
-          .request(app)
-          .post('/login')
-          .send({
-            email: 'admin@admin.com',
-            password: 'secret_admin'
-          });
-  
-        chaiHttpResponse = await chai
-          .request(app)
-          .post('/matches')
-          .set('authorization', chaiHttpResponse.body.token)
-          .send({
-            homeTeam: 16,
-            awayTeam: 8,
-            awayTeamGoals: 2
-          });
-  
-        expect(chaiHttpResponse.status).to.be.equal(400);
-        expect(chaiHttpResponse.body).to.be
-          .include({ 'message': 'All fields must be filled' }); 
-      });
-  
-      it('Testando se não é possível adicionar uma partida sem o awayTeamGoals', async () => {
-        chaiHttpResponse = await chai
-          .request(app)
-          .post('/login')
-          .send({
-            email: 'admin@admin.com',
-            password: 'secret_admin'
-          });
-
-        chaiHttpResponse = await chai
-          .request(app)
-          .post('/matches')
-          .set('authorization', chaiHttpResponse.body.token)
-          .send({
-            homeTeam: 16,
-            awayTeam: 8,
-            homeTeamGoals: 2,
-          });
-  
-        expect(chaiHttpResponse.status).to.be.equal(400);
-        expect(chaiHttpResponse.body).to.be
-          .include({ 'message': 'All fields must be filled' }); 
+          chaiHttpResponse = await chai
+            .request(app)
+            .post('/matches')
+            .set('authorization', chaiHttpResponse.body.token)
+            .send({
+              homeTeam: 16,
+              awayTeam: 8,
+              homeTeamGoals: 2,
+            });
+    
+          expect(chaiHttpResponse.status).to.be.equal(400);
+          expect(chaiHttpResponse.body).to.be
+            .include({ 'message': 'All fields must be filled' }); 
+        });
       });
     });
   });
@@ -426,5 +426,61 @@ describe('Rota /Match', () => {
           .include({ 'message': 'The match does not exist' });
       });
     });
+  });
+
+  describe('Atualizando dados das partidas', () => {
+    describe('Passando um id válido', () => {
+      before(async () => {
+        sinon
+          .stub(Match, "update")
+          .resolves(postMatchMock as any);
+
+        sinon
+          .stub(Match, "findOne")
+          .resolves(getOneMatch as any);
+      });
+  
+      after(async () => {
+        (Match.update as sinon.SinonStub).restore(),
+        (Match.findOne as sinon.SinonStub).restore()
+      });
+
+      it('Testando se é possível atualizar uma partida passando um id válido', async () => {
+        chaiHttpResponse = await chai
+        .request(app)
+        .patch('/matches/41')
+
+        expect(chaiHttpResponse.status).to.be.equal(200);
+        expect(chaiHttpResponse.body).to.be
+          .include({ 'message': 'Partida atualizada com sucesso!' });
+      })
+    })
+
+    describe('Passando um id inválido', () => {
+      before(async () => {
+        sinon
+          .stub(Match, "update")
+          .resolves(postMatchMock as any);
+
+        sinon
+          .stub(Match, "findOne")
+          .resolves(undefined);
+      });
+  
+      after(async () => {
+        (Match.update as sinon.SinonStub).restore(),
+        (Match.findOne as sinon.SinonStub).restore()
+      });
+
+      it('Testando se não é possível atualizar uma partida passando um id inválido', async () => {
+        chaiHttpResponse = await chai
+        .request(app)
+        .patch('/matches/99999999')
+
+        expect(chaiHttpResponse.status).to.be.equal(400);
+        expect(chaiHttpResponse.body).to.be
+          .include({ 'message': 'The match does not exist' });
+      })
+    })
   });
 });
