@@ -12,7 +12,9 @@ import {
   getMatchesInProgressFalseMock,
   getMatchesInProgressTrueMock,
   getMatchesMock,
+  getOneMatch,
   postMatchMock,
+  updateInProgressMock,
 } from './mocks/match.mock';
 
 import { loginSuccessful } from './mocks/login.mock';
@@ -239,6 +241,62 @@ describe('Rota /Match', () => {
         expect(chaiHttpResponse.status).to.be.equal(400);
         expect(chaiHttpResponse.body).to.be
           .include({ 'message': 'All fields must be filled' }); 
+      });
+    });
+  });
+
+  describe('Alterando status da partida', () => {
+    describe('Se passar um id válido', () => {
+      before(async () => {
+        sinon
+          .stub(Match, "update")
+          .resolves(updateInProgressMock as any);
+  
+        sinon
+        .stub(Match, "findOne")
+        .resolves(getOneMatch as any);
+      });
+  
+      after(async () => {
+        (Match.update as sinon.SinonStub).restore(),
+        (Match.findOne as sinon.SinonStub).restore()
+      });
+
+      it('Testando se é possível alterar sem problemas', async () => {
+        chaiHttpResponse = await chai
+          .request(app)
+          .patch('/matches/1/finish')
+
+        expect(chaiHttpResponse.status).to.be.equal(200);
+        expect(chaiHttpResponse.body).to.be
+          .include({ 'message': 'Finished' });
+      });
+    });
+
+    describe('Passando id inválido', () => {
+      before(async () => {
+        sinon
+          .stub(Match, "update")
+          .resolves(updateInProgressMock as any);
+
+        sinon
+        .stub(Match, "findOne")
+        .resolves(undefined);
+      });
+
+      after(async () => {
+        (Match.update as sinon.SinonStub).restore(),
+        (Match.findOne as sinon.SinonStub).restore()
+      });
+
+      it('Testando se não é possível alterar com um id inexistente', async () => {
+        chaiHttpResponse = await chai
+        .request(app)
+        .patch('/matches/99999999/finish')
+
+        expect(chaiHttpResponse.status).to.be.equal(400);
+        expect(chaiHttpResponse.body).to.be
+          .include({ 'message': 'The match does not exist' });
       });
     });
   });
