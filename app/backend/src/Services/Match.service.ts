@@ -33,7 +33,19 @@ export default class MatchService {
 
     if (!match) throw new ErrorHandle(400, 'The match does not exist');
 
-    const editedResult = await new MatchModel().updateMatch(id, inProgress);
+    const editedResult = await new MatchModel().finishMatch(id, inProgress);
+    return editedResult;
+  };
+
+  public updateMatch = async (
+    id: number,
+    { homeTeamGoals, awayTeamGoals }: { homeTeamGoals: number, awayTeamGoals: number },
+  ) => {
+    const match = await new MatchModel().getOneMatch(id);
+
+    if (!match) throw new ErrorHandle(400, 'The match does not exist');
+
+    const editedResult = await new MatchModel().updateMatch(id, homeTeamGoals, awayTeamGoals);
     return editedResult;
   };
 }
