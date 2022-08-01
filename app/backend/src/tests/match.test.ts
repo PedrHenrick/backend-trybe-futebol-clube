@@ -7,7 +7,7 @@ import { app } from '../app';
 import Match from '../database/models/match';
 
 import { Response } from 'superagent';
-import { getMatchesMock } from './mocks/match.mock';
+import { getMatchesInProgressFalseMock, getMatchesInProgressTrueMock, getMatchesMock } from './mocks/match.mock';
 
 chai.use(chaiHttp);
 
@@ -33,6 +33,49 @@ describe('Rota /Match', () => {
       expect(chaiHttpResponse.body[0]).to.be.an('object');
       expect(chaiHttpResponse.body[0].teamHome).to.be.exist;
       expect(chaiHttpResponse.body[0].teamAway).to.be.exist;
+      expect(chaiHttpResponse.body).to.be.length(48);
+    });
+  });
+
+  describe('Testando com query inProgress=true', () => {    
+    before(async () => sinon
+      .stub(Match, "findAll")
+      .resolves(getMatchesInProgressTrueMock as any));
+
+    after(()=>{ (Match.findAll as sinon.SinonStub).restore() });
+    
+    it('Testando quando passamos o inProgress=true', async () => {
+      chaiHttpResponse = await chai
+        .request(app)
+        .get('/matches?inProgress=true');
+
+      expect(chaiHttpResponse.status).to.be.equal(200);
+      expect(chaiHttpResponse.body).to.be.an('array');
+      expect(chaiHttpResponse.body[0]).to.be.an('object');
+      expect(chaiHttpResponse.body[0].teamHome).to.be.exist;
+      expect(chaiHttpResponse.body[0].teamAway).to.be.exist;
+      expect(chaiHttpResponse.body).to.be.length(8);
+    });
+  });
+
+  describe('Testando com query inProgress=false', () => {    
+    before(async () => sinon
+      .stub(Match, "findAll")
+      .resolves(getMatchesInProgressFalseMock as any));
+
+    after(()=>{ (Match.findAll as sinon.SinonStub).restore() });
+    
+    it('Testando quando passamos o inProgress=false', async () => {
+      chaiHttpResponse = await chai
+        .request(app)
+        .get('/matches?inProgress=false');
+
+      expect(chaiHttpResponse.status).to.be.equal(200);
+      expect(chaiHttpResponse.body).to.be.an('array');
+      expect(chaiHttpResponse.body[0]).to.be.an('object');
+      expect(chaiHttpResponse.body[0].teamHome).to.be.exist;
+      expect(chaiHttpResponse.body[0].teamAway).to.be.exist;
+      expect(chaiHttpResponse.body).to.be.length(40);
     });
   });
 });
