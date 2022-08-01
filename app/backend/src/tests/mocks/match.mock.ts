@@ -1359,3 +1359,22 @@ export const postMatchMock = {
     awayTeamGoals: 2,
     inProgress: true
 };
+
+export const updateInProgressMock = {
+    inProgress: 0,
+};
+
+export const getOneMatch = {
+    id: 41,
+    homeTeam: 16,
+    homeTeamGoals: 2,
+    awayTeam: 9,
+    awayTeamGoals: 0,
+    inProgress: 1,
+    teamHome: {
+        teamName: "São Paulo"
+    },
+    teamAway: {
+        teamName: "Internacional"
+    }
+}
