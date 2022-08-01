@@ -12,5 +12,6 @@ matchRouter.post(
   validateMiddleware(matchSchema),
   new MatchController().addMatch,
 );
+matchRouter.patch('/:id/finish', new MatchController().endMatch);
 
 export default matchRouter;
