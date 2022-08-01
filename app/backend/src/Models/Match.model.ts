@@ -10,6 +10,8 @@ export default class MatchModel {
     ],
   });
 
+  public getOneMatch = (id: number) => Match.findOne({ where: { id } });
+
   public getMatchesInProgress = (inProgress: boolean) => Match.findAll({
     where: { inProgress },
     include: [
@@ -18,8 +20,8 @@ export default class MatchModel {
     ],
   });
 
-  public addMatch = async (additionScheme: IMatch) => {
-    const result = await Match.create(additionScheme);
-    return result;
-  };
+  public addMatch = (additionScheme: IMatch) => Match.create(additionScheme);
+
+  public updateMatch = async (id: number, inProgress: boolean) => Match
+    .update({ inProgress }, { where: { id } });
 }
