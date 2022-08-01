@@ -14,4 +14,9 @@ export default class MatchController {
     const allMatches = await new MatchService().getAllMatches();
     return response.status(200).json(allMatches);
   };
+
+  public addMatch = async (request: Request, response: Response): Promise<Response> => {
+    const resultMatch = await new MatchService().addMatch(request.body);
+    return response.status(201).json(resultMatch);
+  };
 }
