@@ -49,7 +49,6 @@ export default class Leaderboard {
     const name = team.teamName;
     const totalGames = matches.length;
     const totalVictories = this.calculateWins(matches);
-
     const totalDraws = this.calculateDraws(matches);
     const totalPoints = (totalVictories * 3) + totalDraws;
     const totalLosses = this.calculateLosses(matches);

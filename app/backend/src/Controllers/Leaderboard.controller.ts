@@ -11,4 +11,9 @@ export default class LeaderboardController {
     const resultOfAway = await new LeaderboardService().getResultOfAway();
     return response.status(200).json(resultOfAway);
   };
+
+  public getResult = async (_request: Request, response: Response): Promise<Response> => {
+    const result = await new LeaderboardService().getResult();
+    return response.status(200).json(result);
+  };
 }
