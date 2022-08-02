@@ -6,4 +6,9 @@ export default class LeaderboardController {
     const resultOfHome = await new LeaderboardService().getResultOfHome();
     return response.status(200).json(resultOfHome);
   };
+
+  public getResultOfAway = async (_request: Request, response: Response): Promise<Response> => {
+    const resultOfAway = await new LeaderboardService().getResultOfAway();
+    return response.status(200).json(resultOfAway);
+  };
 }
