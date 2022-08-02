@@ -9,7 +9,7 @@ export default class LeaderboardService {
 
     const allTeamsOfHome = await Promise.all(teams.map((team) => {
       const allMatchesOfHomeTeam = matches.filter((match) => match.homeTeam === team.id);
-      return new Leaderboard().leaderboard(team, allMatchesOfHomeTeam);
+      return new Leaderboard().leaderboard('home', team, allMatchesOfHomeTeam);
     }));
 
     return new Leaderboard().putInOrder(allTeamsOfHome);
@@ -21,7 +21,7 @@ export default class LeaderboardService {
 
     const allTeamsOfAway = await Promise.all(teams.map((team) => {
       const allMatchesOfAwayTeam = matches.filter((match) => match.awayTeam === team.id);
-      return new Leaderboard().leaderboard(team, allMatchesOfAwayTeam);
+      return new Leaderboard().leaderboard('away', team, allMatchesOfAwayTeam);
     }));
 
     return new Leaderboard().putInOrder(allTeamsOfAway);
@@ -34,7 +34,7 @@ export default class LeaderboardService {
     const allTeams = await Promise.all(teams.map((team) => {
       const allMatchesTeam = matches
         .filter((match) => match.awayTeam === team.id || match.homeTeam === team.id);
-      return new Leaderboard().leaderboard(team, allMatchesTeam);
+      return new Leaderboard().leaderboard('any', team, allMatchesTeam);
     }));
 
     return new Leaderboard().putInOrder(allTeams);
