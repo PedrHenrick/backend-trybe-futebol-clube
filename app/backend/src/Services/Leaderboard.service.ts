@@ -14,4 +14,16 @@ export default class LeaderboardService {
 
     return new Leaderboard().putInOrder(allTeamsOfHome);
   };
+
+  public getResultOfAway = async () => {
+    const teams = await new TeamModel().getAllTeams();
+    const matches = await new MatchModel().getAllMatches();
+
+    const allTeamsOfAway = await Promise.all(teams.map((team) => {
+      const allMatchesOfAwayTeam = matches.filter((match) => match.awayTeam === team.id);
+      return new Leaderboard().leaderboard(team, allMatchesOfAwayTeam);
+    }));
+
+    return new Leaderboard().putInOrder(allTeamsOfAway);
+  };
 }
