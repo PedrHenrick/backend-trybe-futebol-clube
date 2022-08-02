@@ -10,6 +10,14 @@ export default class MatchModel {
     ],
   });
 
+  public getAllMatchesNotInProgress = () => Match.findAll({
+    where: { inProgress: false },
+    include: [
+      { model: Team, as: 'teamHome', attributes: ['teamName'] },
+      { model: Team, as: 'teamAway', attributes: ['teamName'] },
+    ],
+  });
+
   public getOneMatch = (id: number) => Match.findOne({ where: { id } });
 
   public getMatchesInProgress = (inProgress: boolean) => Match.findAll({
