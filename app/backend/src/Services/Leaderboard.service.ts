@@ -5,7 +5,7 @@ import Leaderboard from '../Utils/Leaderboard';
 export default class LeaderboardService {
   public getResultOfHome = async () => {
     const teams = await new TeamModel().getAllTeams();
-    const matches = await new MatchModel().getAllMatches();
+    const matches = await new MatchModel().getAllMatchesNotInProgress();
 
     const allTeamsOfHome = await Promise.all(teams.map((team) => {
       const allMatchesOfHomeTeam = matches.filter((match) => match.homeTeam === team.id);
@@ -17,7 +17,7 @@ export default class LeaderboardService {
 
   public getResultOfAway = async () => {
     const teams = await new TeamModel().getAllTeams();
-    const matches = await new MatchModel().getAllMatches();
+    const matches = await new MatchModel().getAllMatchesNotInProgress();
 
     const allTeamsOfAway = await Promise.all(teams.map((team) => {
       const allMatchesOfAwayTeam = matches.filter((match) => match.awayTeam === team.id);
@@ -25,5 +25,18 @@ export default class LeaderboardService {
     }));
 
     return new Leaderboard().putInOrder(allTeamsOfAway);
+  };
+
+  public getResult = async () => {
+    const teams = await new TeamModel().getAllTeams();
+    const matches = await new MatchModel().getAllMatchesNotInProgress();
+
+    const allTeams = await Promise.all(teams.map((team) => {
+      const allMatchesTeam = matches
+        .filter((match) => match.awayTeam === team.id || match.homeTeam === team.id);
+      return new Leaderboard().leaderboard(team, allMatchesTeam);
+    }));
+
+    return new Leaderboard().putInOrder(allTeams);
   };
 }
